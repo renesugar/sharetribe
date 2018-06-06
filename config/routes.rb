@@ -116,7 +116,7 @@ Rails.application.routes.draw do
 
     put '/mercury_update' => "mercury_update#update", :as => :mercury_update
 
-    get "/transactions/op_status/:process_token" => "transactions#paypal_op_status", as: :paypal_op_status
+    get "/transactions/op_status/:process_token" => "paypal_service/checkout_orders#paypal_op_status", as: :paypal_op_status
     get "/transactions/transaction_op_status/:process_token" => "transactions#transaction_op_status", :as => :transaction_op_status
     get "/transactions/created/:transaction_id" => "transactions#created", as: :transaction_created
     get "/transactions/finalize_processed/:process_token" => "transactions#finalize_processed", as: :transaction_finalize_processed
@@ -172,7 +172,7 @@ Rails.application.routes.draw do
 
     namespace :admin do
       get '' => "getting_started_guide#index"
-      
+
       # Payments
       resources :payment_preferences, only: [:index], param: :payment_gateway do
         collection do
@@ -188,7 +188,7 @@ Rails.application.routes.draw do
       get  "/paypal_preferences" => redirect("/%{locale}/admin/payment_preferences")
       get  "/paypal_preferences/account_create"       => "paypal_preferences#account_create"
       get  "/paypal_preferences/permissions_verified" => "paypal_preferences#permissions_verified"
-      
+
       # Settings
       get   "/settings" => "communities#settings",        as: :settings
       patch "/settings" => "communities#update_settings", as: :update_settings
@@ -201,6 +201,7 @@ Rails.application.routes.draw do
       get "getting_started_guide/payment"                => "getting_started_guide#payment",                as: :getting_started_guide_payment
       get "getting_started_guide/listing"                => "getting_started_guide#listing",                as: :getting_started_guide_listing
       get "getting_started_guide/invitation"             => "getting_started_guide#invitation",             as: :getting_started_guide_invitation
+      get "getting_started_guide/skip_payment"           => "getting_started_guide#skip_payment",           as: :getting_started_guide_skip_payment
 
       # Details and look 'n feel
       get   "/look_and_feel/edit" => "communities#edit_look_and_feel",          as: :look_and_feel_edit
@@ -267,8 +268,14 @@ Rails.application.routes.draw do
           get "getting_started_guide/invitation",             to: redirect("/admin/getting_started_guide/invitation")
 
         end
-        resources :transactions, controller: :community_transactions, only: :index
+        resources :transactions, controller: :community_transactions, only: :index do
+          collection do
+            get 'export'
+            get 'export_status'
+          end
+        end
         resources :conversations, controller: :community_conversations, only: [:index, :show]
+        resources :testimonials, controller: :community_testimonials, only: [:index, :show]
         resources :emails
         resources :community_memberships do
           member do

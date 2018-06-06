@@ -10,13 +10,20 @@ This file follows the best practices from [keepachangelog.com](http://keepachang
 
 ### Added
 
+- Add soundcloud link support in custom landing page footer [#3300](https://github.com/sharetribe/sharetribe/pull/3300)
+- Add checkbox for consent for receiving emails from admins to signup process [#3318](https://github.com/sharetribe/sharetribe/pull/3318)
+
 ### Changed
+
+- Improve user deletion to clear personal data more thoroughly [#3325](https://github.com/sharetribe/sharetribe/pull/3325)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- Fix Dockerfile issue where bundler was trying to install binaries in root-owner directory [#3321](https://github.com/sharetribe/sharetribe/pull/3321). Thanks, Nick Meiremans.
 
 ### Security
 
